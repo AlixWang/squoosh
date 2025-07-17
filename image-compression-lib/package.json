@@ -1,0 +1,80 @@
+{
+  "name": "image-compression-lib",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A TypeScript library for image compression and format conversion based on Squoosh",
+  "main": "dist/node/index.js",
+  "browser": "dist/browser/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "node": {
+        "import": "./dist/esm/index.js",
+        "require": "./dist/node/index.js",
+        "types": "./dist/types/index.d.ts"
+      },
+      "browser": {
+        "import": "./dist/browser/index.js",
+        "types": "./dist/types/index.d.ts"
+      },
+      "default": {
+        "import": "./dist/esm/index.js",
+        "require": "./dist/node/index.js",
+        "types": "./dist/types/index.d.ts"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run build:types && npm run build:node && npm run build:browser && npm run build:esm",
+    "build:types": "tsc --project tsconfig.types.json",
+    "build:node": "tsc --project tsconfig.node.json",
+    "build:browser": "rollup -c rollup.config.browser.js",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "clean": "rimraf dist",
+    "dev": "tsc --project tsconfig.node.json --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "image",
+    "compression",
+    "webp",
+    "avif",
+    "jpeg-xl",
+    "png",
+    "typescript",
+    "browser",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.5.0",
+    "jsdom": "^23.0.0",
+    "rimraf": "^5.0.0",
+    "rollup": "^3.0.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
