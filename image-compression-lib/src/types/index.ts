@@ -37,10 +37,15 @@ export interface QuantizeOptions {
   dither?: number;
 }
 
+// Rotation options
+export interface RotateOptions {
+  angle: number;
+}
+
 // Processing operation definition
 export interface ProcessingOperation {
   type: 'resize' | 'rotate' | 'quantize';
-  options: ResizeOptions | number | QuantizeOptions;
+  options: ResizeOptions | RotateOptions | QuantizeOptions;
 }
 
 // Supported formats information
@@ -82,5 +87,5 @@ export interface WorkerResponse {
 // Processor options union type
 export type ProcessorOptions =
   | ResizeOptions
-  | QuantizeOptions
-  | { angle: number };
+  | RotateOptions
+  | QuantizeOptions;

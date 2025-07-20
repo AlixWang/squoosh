@@ -9,6 +9,7 @@ export default {
     file: 'dist/browser/index.js',
     format: 'es',
     sourcemap: true,
+    inlineDynamicImports: true,
   },
   plugins: [
     nodeResolve({

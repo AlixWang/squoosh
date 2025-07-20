@@ -54,4 +54,6 @@ export interface ImagePipeline {
   quantize(options: import('../types/index.js').QuantizeOptions): ImagePipeline;
   encode(format: ImageFormat, options?: EncodeOptions): ImagePipeline;
   execute(): Promise<ArrayBuffer | ImageData>;
+  reset(): ImagePipeline;
+  clone(): ImagePipeline;
 }

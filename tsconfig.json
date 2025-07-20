@@ -4,6 +4,7 @@
   "references": [
     { "path": "./client-tsconfig.json" },
     { "path": "./worker-tsconfig.json" },
-    { "path": "./static-build-tsconfig.json" }
+    { "path": "./static-build-tsconfig.json" },
+    { "path": "./image-compression-lib" }
   ]
 }
