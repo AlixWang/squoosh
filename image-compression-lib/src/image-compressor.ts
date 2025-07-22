@@ -1,5 +1,8 @@
 /**
- * Main ImageCompressor class - Primary interface for the image compression library
+ * @fileoverview Main ImageCompressor class - Primary interface for the image compression library
+ *
+ * This file contains the main ImageCompressor class which provides the public API
+ * for image compression, format conversion, and processing operations.
  */
 
 import {
@@ -14,7 +17,10 @@ import {
   QuantizeOptions,
   ProcessorOptions,
 } from './types/index.js';
-import { ImageCompressor as IImageCompressor, ImagePipeline } from './interfaces/library.js';
+import {
+  ImageCompressor as IImageCompressor,
+  ImagePipeline,
+} from './interfaces/library.js';
 import { CodecManager } from './codecs/codec-registry.js';
 import { ProcessorRegistry } from './processors/processor-registry.js';
 import { FormatDetector, CodecValidator } from './codecs/codec-utils.js';
@@ -30,15 +36,56 @@ import { InputValidator } from './validation/input-validator.js';
 import { ErrorRecovery } from './validation/error-recovery.js';
 
 /**
- * Main ImageCompressor class providing the public API
+ * Main ImageCompressor class providing the public API for image compression and processing.
+ *
+ * This class serves as the primary entry point for all image operations including:
+ * - Format conversion between different image formats
+ * - Image decoding and encoding
+ * - Image processing operations (resize, rotate, quantize)
+ * - Pipeline-based operation chaining
+ *
+ * @example Basic usage
+ * ```typescript
+ * import { ImageCompressor } from 'image-compression-lib';
+ *
+ * const compressor = new ImageCompressor();
+ *
+ * // Convert PNG to WebP
+ * const webpBuffer = await compressor.convert(pngBuffer, 'webp', { quality: 80 });
+ *
+ * // Resize and encode
+ * const resized = await compressor.pipeline()
+ *   .input(imageBuffer)
+ *   .resize({ width: 800, height: 600 })
+ *   .encode('avif', { quality: 90 })
+ *   .execute();
+ * ```
+ *
+ * @public
  */
 export class ImageCompressor implements IImageCompressor {
   private codecManager: CodecManager;
   private processorRegistry: ProcessorRegistry;
 
+  /**
+   * Creates a new ImageCompressor instance.
+   *
+   * @param codecManager - Optional custom codec manager. If not provided, a default one will be created.
+   * @param processorRegistry - Optional custom processor registry. If not provided, a default one will be created.
+   *
+   * @example
+   * ```typescript
+   * // Use default configuration
+   * const compressor = new ImageCompressor();
+   *
+   * // Use custom codec manager
+   * const customCodecManager = new CodecManager();
+   * const compressor = new ImageCompressor(customCodecManager);
+   * ```
+   */
   constructor(
     codecManager?: CodecManager,
-    processorRegistry?: ProcessorRegistry
+    processorRegistry?: ProcessorRegistry,
   ) {
     this.codecManager = codecManager || new CodecManager();
     this.processorRegistry = processorRegistry || new ProcessorRegistry();
@@ -50,12 +97,12 @@ export class ImageCompressor implements IImageCompressor {
   async convert(
     input: ImageInput,
     targetFormat: ImageFormat,
-    options?: EncodeOptions
+    options?: EncodeOptions,
   ): Promise<ArrayBuffer> {
     const context: ErrorContext = {
       operation: 'convert',
       format: targetFormat,
-      stage: 'validation'
+      stage: 'validation',
     };
 
     try {
@@ -77,22 +124,24 @@ export class ImageCompressor implements IImageCompressor {
       return await ErrorRecovery.withRetry(
         () => this.codecManager.convert(buffer, targetFormat, options),
         { maxAttempts: 2 },
-        context
+        context,
       );
     } catch (error) {
-      if (error instanceof ValidationError || 
-          error instanceof UnsupportedFormatError) {
+      if (
+        error instanceof ValidationError ||
+        error instanceof UnsupportedFormatError
+      ) {
         throw error;
       }
       throw new EncodingError(
         `Failed to convert image to ${targetFormat}`,
         undefined,
-        { 
+        {
           ...context,
           originalError: error,
           targetFormat,
-          options 
-        }
+          options,
+        },
       );
     }
   }
@@ -103,7 +152,7 @@ export class ImageCompressor implements IImageCompressor {
   async decode(input: ImageInput): Promise<ImageData> {
     const context: ErrorContext = {
       operation: 'decode',
-      stage: 'validation'
+      stage: 'validation',
     };
 
     try {
@@ -118,26 +167,31 @@ export class ImageCompressor implements IImageCompressor {
       const imageData = await ErrorRecovery.withRetry(
         () => this.codecManager.decoders.decode(buffer),
         { maxAttempts: 2 },
-        context
+        context,
       );
-      
+
       // Validate the result
       if (!CodecValidator.validateImageData(imageData)) {
-        throw new DecodingError('Decoded ImageData is invalid', undefined, context);
+        throw new DecodingError(
+          'Decoded ImageData is invalid',
+          undefined,
+          context,
+        );
       }
 
       return imageData;
     } catch (error) {
-      if (error instanceof ValidationError || 
-          error instanceof UnsupportedFormatError ||
-          error instanceof DecodingError) {
+      if (
+        error instanceof ValidationError ||
+        error instanceof UnsupportedFormatError ||
+        error instanceof DecodingError
+      ) {
         throw error;
       }
-      throw new DecodingError(
-        'Failed to decode image',
-        undefined,
-        { ...context, originalError: error }
-      );
+      throw new DecodingError('Failed to decode image', undefined, {
+        ...context,
+        originalError: error,
+      });
     }
   }
 
@@ -147,12 +201,12 @@ export class ImageCompressor implements IImageCompressor {
   async encode(
     imageData: ImageData,
     format: ImageFormat,
-    options?: EncodeOptions
+    options?: EncodeOptions,
   ): Promise<ArrayBuffer> {
     const context: ErrorContext = {
       operation: 'encode',
       format,
-      stage: 'validation'
+      stage: 'validation',
     };
 
     try {
@@ -171,22 +225,24 @@ export class ImageCompressor implements IImageCompressor {
       return await ErrorRecovery.withRetry(
         () => this.codecManager.encoders.encode(imageData, format, options),
         { maxAttempts: 2 },
-        context
+        context,
       );
     } catch (error) {
-      if (error instanceof ValidationError || 
-          error instanceof UnsupportedFormatError) {
+      if (
+        error instanceof ValidationError ||
+        error instanceof UnsupportedFormatError
+      ) {
         throw error;
       }
       throw new EncodingError(
         `Failed to encode image as ${format}`,
         undefined,
-        { 
+        {
           ...context,
           originalError: error,
           format,
-          options 
-        }
+          options,
+        },
       );
     }
   }
@@ -196,22 +252,22 @@ export class ImageCompressor implements IImageCompressor {
    */
   async process(
     input: ImageInput,
-    operations: ProcessingOperation[]
+    operations: ProcessingOperation[],
   ): Promise<ImageData> {
     const context: ErrorContext = {
       operation: 'process',
-      stage: 'validation'
+      stage: 'validation',
     };
 
     try {
       // Validate inputs
       InputValidator.validateImageInput(input, context);
-      
+
       if (!operations || operations.length === 0) {
         throw new ValidationError(
           'At least one processing operation must be provided',
           undefined,
-          context
+          context,
         );
       }
 
@@ -229,33 +285,35 @@ export class ImageCompressor implements IImageCompressor {
       for (let i = 0; i < operations.length; i++) {
         const operation = operations[i];
         if (!operation) continue;
-        
-        const operationContext = { ...context, operationIndex: i, operationType: operation.type };
-        
+
+        const operationContext = {
+          ...context,
+          operationIndex: i,
+          operationType: operation.type,
+        };
+
         imageData = await ErrorRecovery.withRetry(
           () => this.applyProcessingOperation(imageData, operation),
           { maxAttempts: 2 },
-          operationContext
+          operationContext,
         );
       }
 
       return imageData;
     } catch (error) {
-      if (error instanceof ValidationError || 
-          error instanceof UnsupportedFormatError ||
-          error instanceof DecodingError ||
-          error instanceof ProcessingError) {
+      if (
+        error instanceof ValidationError ||
+        error instanceof UnsupportedFormatError ||
+        error instanceof DecodingError ||
+        error instanceof ProcessingError
+      ) {
         throw error;
       }
-      throw new ProcessingError(
-        'Failed to process image',
-        undefined,
-        { 
-          ...context,
-          originalError: error,
-          operations 
-        }
-      );
+      throw new ProcessingError('Failed to process image', undefined, {
+        ...context,
+        originalError: error,
+        operations,
+      });
     }
   }
 
@@ -313,7 +371,10 @@ export class ImageCompressor implements IImageCompressor {
     }
 
     if (input instanceof Uint8Array) {
-      return input.buffer.slice(input.byteOffset, input.byteOffset + input.byteLength);
+      return input.buffer.slice(
+        input.byteOffset,
+        input.byteOffset + input.byteLength,
+      );
     }
 
     if (input instanceof Blob || input instanceof File) {
@@ -323,25 +384,25 @@ export class ImageCompressor implements IImageCompressor {
     if (input instanceof ImageData) {
       // Convert ImageData to PNG buffer for processing
       // This is a simplified approach - in practice, you might want to use a canvas
-      throw new ValidationError('ImageData input not yet supported - use decode() first');
+      throw new ValidationError(
+        'ImageData input not yet supported - use decode() first',
+      );
     }
 
     throw new ValidationError('Unsupported input type');
   }
-
-
 
   /**
    * Apply a single processing operation
    */
   private async applyProcessingOperation(
     imageData: ImageData,
-    operation: ProcessingOperation
+    operation: ProcessingOperation,
   ): Promise<ImageData> {
     const context: ErrorContext = {
       operation: 'process',
       stage: operation.type,
-      processor: operation.type
+      processor: operation.type,
     };
 
     const processor = this.processorRegistry.get(operation.type);
@@ -352,32 +413,46 @@ export class ImageCompressor implements IImageCompressor {
     // Validate options based on operation type using InputValidator
     this.validateProcessingOptions(operation, context);
 
-    return await processor.process(imageData, operation.options as ProcessorOptions);
+    return await processor.process(
+      imageData,
+      operation.options as ProcessorOptions,
+    );
   }
 
   /**
    * Validate processing operation options
    */
-  private validateProcessingOptions(operation: ProcessingOperation, context: ErrorContext): void {
+  private validateProcessingOptions(
+    operation: ProcessingOperation,
+    context: ErrorContext,
+  ): void {
     switch (operation.type) {
       case 'resize':
-        InputValidator.validateResizeOptions(operation.options as ResizeOptions, context);
+        InputValidator.validateResizeOptions(
+          operation.options as ResizeOptions,
+          context,
+        );
         break;
       case 'rotate':
-        InputValidator.validateRotationAngle((operation.options as RotateOptions).angle, context);
+        InputValidator.validateRotationAngle(
+          (operation.options as RotateOptions).angle,
+          context,
+        );
         break;
       case 'quantize':
-        InputValidator.validateQuantizeOptions(operation.options as QuantizeOptions, context);
+        InputValidator.validateQuantizeOptions(
+          operation.options as QuantizeOptions,
+          context,
+        );
         break;
       default:
         throw new ValidationError(
           `Unknown processing operation: ${operation.type}`,
           undefined,
-          context
+          context,
         );
     }
   }
-
 }
 /**
 
@@ -460,11 +535,17 @@ class ImagePipelineImpl implements ImagePipeline {
     try {
       // Validate that we have an input
       if (!this.inputSource) {
-        throw new ValidationError('Pipeline input must be set before execution');
+        throw new ValidationError(
+          'Pipeline input must be set before execution',
+        );
       }
 
       // If we only need to decode, do that
-      if (this.shouldDecode && this.operations.length === 0 && !this.encodeFormat) {
+      if (
+        this.shouldDecode &&
+        this.operations.length === 0 &&
+        !this.encodeFormat
+      ) {
         return await this.compressor.decode(this.inputSource);
       }
 
@@ -479,12 +560,19 @@ class ImagePipelineImpl implements ImagePipeline {
 
       // Apply processing operations if any
       if (this.operations.length > 0) {
-        imageData = await this.compressor.process(this.inputSource, this.operations);
+        imageData = await this.compressor.process(
+          this.inputSource,
+          this.operations,
+        );
       }
 
       // If encoding is requested, encode and return buffer
       if (this.encodeFormat) {
-        return await this.compressor.encode(imageData, this.encodeFormat, this.encodeOptions);
+        return await this.compressor.encode(
+          imageData,
+          this.encodeFormat,
+          this.encodeOptions,
+        );
       }
 
       // Otherwise return the ImageData
@@ -493,15 +581,11 @@ class ImagePipelineImpl implements ImagePipeline {
       if (error instanceof ValidationError) {
         throw error;
       }
-      throw new ProcessingError(
-        'Pipeline execution failed',
-        undefined,
-        { 
-          originalError: error,
-          operations: this.operations,
-          encodeFormat: this.encodeFormat 
-        }
-      );
+      throw new ProcessingError('Pipeline execution failed', undefined, {
+        originalError: error,
+        operations: this.operations,
+        encodeFormat: this.encodeFormat,
+      });
     }
   }
 
@@ -526,7 +610,9 @@ class ImagePipelineImpl implements ImagePipeline {
     cloned.operations = [...this.operations];
     cloned.shouldDecode = this.shouldDecode;
     cloned.encodeFormat = this.encodeFormat || undefined;
-    cloned.encodeOptions = this.encodeOptions ? { ...this.encodeOptions } : undefined;
+    cloned.encodeOptions = this.encodeOptions
+      ? { ...this.encodeOptions }
+      : undefined;
     return cloned;
   }
 }

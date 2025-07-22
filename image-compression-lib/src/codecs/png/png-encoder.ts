@@ -4,7 +4,7 @@
 
 import { AbstractEncoder } from '../base-codec.js';
 import { ImageFormat, EncodeOptions } from '../../types/index.js';
-import { EncodingError } from '../../errors/index.js';
+import { EncodingError, ErrorCode } from '../../errors/index.js';
 import init, { encode } from './pkg/squoosh_png.js';
 
 /**
@@ -34,7 +34,7 @@ export class PngEncoder extends AbstractEncoder {
         await init();
         this.initialized = true;
       } catch (error) {
-        throw new EncodingError('Failed to initialize PNG encoder module', { error });
+        throw new EncodingError('Failed to initialize PNG encoder module', ErrorCode.ENCODER_INITIALIZATION_FAILED, { error });
       }
     }
   }
@@ -81,7 +81,7 @@ export class PngEncoder extends AbstractEncoder {
       if (error instanceof EncodingError) {
         throw error;
       }
-      throw new EncodingError('PNG encoding failed', { error });
+      throw new EncodingError('PNG encoding failed', ErrorCode.ENCODING_FAILED, { error });
     }
   }
 

@@ -4,7 +4,7 @@
 
 import { AbstractEncoder } from '../base-codec.js';
 import { ImageFormat, EncodeOptions } from '../../types/index.js';
-import { EncodingError } from '../../errors/index.js';
+import { EncodingError, ErrorCode } from '../../errors/index.js';
 import type { JXLModule, EncodeOptions as JXLEncodeOptions } from './enc/jxl_enc.js';
 
 /**
@@ -51,7 +51,7 @@ export class JXLEncoder extends AbstractEncoder {
         noInitialRun: true,
       });
     } catch (error) {
-      throw new EncodingError('Failed to load JPEG XL encoder module', { error });
+      throw new EncodingError('Failed to load JPEG XL encoder module', ErrorCode.ENCODER_INITIALIZATION_FAILED, { error });
     }
   }
 
@@ -176,7 +176,7 @@ export class JXLEncoder extends AbstractEncoder {
       if (error instanceof EncodingError) {
         throw error;
       }
-      throw new EncodingError('JPEG XL encoding failed', { error });
+      throw new EncodingError('JPEG XL encoding failed', ErrorCode.ENCODING_FAILED, { error });
     }
   }
 

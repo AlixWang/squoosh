@@ -4,7 +4,7 @@
 
 import { AbstractDecoder } from '../base-codec.js';
 import { ImageFormat } from '../../types/index.js';
-import { DecodingError } from '../../errors/index.js';
+import { DecodingError, ErrorCode } from '../../errors/index.js';
 import type { AVIFModule } from './dec/avif_dec.js';
 
 /**
@@ -37,7 +37,7 @@ export class AVIFDecoder extends AbstractDecoder {
         noInitialRun: true,
       });
     } catch (error) {
-      throw new DecodingError('Failed to load AVIF decoder module', { error });
+      throw new DecodingError('Failed to load AVIF decoder module', ErrorCode.DECODER_INITIALIZATION_FAILED, { error });
     }
   }
 
@@ -100,7 +100,7 @@ export class AVIFDecoder extends AbstractDecoder {
       if (error instanceof DecodingError) {
         throw error;
       }
-      throw new DecodingError('AVIF decoding failed', { error });
+      throw new DecodingError('AVIF decoding failed', ErrorCode.DECODING_FAILED, { error });
     }
   }
 

@@ -4,7 +4,7 @@
 
 import { AbstractEncoder } from '../base-codec.js';
 import { ImageFormat, EncodeOptions } from '../../types/index.js';
-import { EncodingError } from '../../errors/index.js';
+import { EncodingError, ErrorCode } from '../../errors/index.js';
 import type { MozJPEGModule, EncodeOptions as MozJpegEncodeOptions, MozJpegColorSpace } from './enc/mozjpeg_enc.js';
 
 /**
@@ -59,7 +59,7 @@ export class MozJpegEncoder extends AbstractEncoder {
         noInitialRun: true,
       });
     } catch (error) {
-      throw new EncodingError('Failed to load MozJPEG encoder module', { error });
+      throw new EncodingError('Failed to load MozJPEG encoder module', ErrorCode.ENCODER_INITIALIZATION_FAILED, { cause: error as Error });
     }
   }
 
@@ -170,7 +170,7 @@ export class MozJpegEncoder extends AbstractEncoder {
       if (error instanceof EncodingError) {
         throw error;
       }
-      throw new EncodingError('JPEG encoding failed', { error });
+      throw new EncodingError('JPEG encoding failed', ErrorCode.ENCODING_FAILED, { cause: error as Error });
     }
   }
 

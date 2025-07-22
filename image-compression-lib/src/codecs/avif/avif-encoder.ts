@@ -4,7 +4,7 @@
 
 import { AbstractEncoder } from '../base-codec.js';
 import { ImageFormat, EncodeOptions } from '../../types/index.js';
-import { EncodingError } from '../../errors/index.js';
+import { EncodingError, ErrorCode } from '../../errors/index.js';
 import type { AVIFModule, EncodeOptions as AVIFEncodeOptions, AVIFTune } from './enc/avif_enc.js';
 
 /**
@@ -54,7 +54,7 @@ export class AVIFEncoder extends AbstractEncoder {
         noInitialRun: true,
       });
     } catch (error) {
-      throw new EncodingError('Failed to load AVIF encoder module', { error });
+      throw new EncodingError('Failed to load AVIF encoder module', ErrorCode.ENCODER_INITIALIZATION_FAILED, { error });
     }
   }
 
@@ -203,7 +203,7 @@ export class AVIFEncoder extends AbstractEncoder {
       if (error instanceof EncodingError) {
         throw error;
       }
-      throw new EncodingError('AVIF encoding failed', { error });
+      throw new EncodingError('AVIF encoding failed', ErrorCode.ENCODING_FAILED, { error });
     }
   }
 

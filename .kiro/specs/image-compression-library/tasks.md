@@ -164,8 +164,8 @@
   - Write performance tests
   - _Requirements: 7.2, 7.3, 7.5_
 
-- [ ] 11. Create comprehensive test suite
-- [ ] 11.1 Write unit tests for all components
+- [x] 11. Create comprehensive test suite
+- [x] 11.1 Write unit tests for all components
 
   - Create unit tests for codecs, processors, and core classes
   - Implement test utilities for image comparison and validation
@@ -173,7 +173,7 @@
   - Set up test data with sample images in various formats
   - _Requirements: All requirements_
 
-- [ ] 11.2 Write integration and end-to-end tests
+- [x] 11.2 Write integration and end-to-end tests
 
   - Create integration tests for complete processing pipelines
   - Implement cross-format conversion tests
@@ -181,15 +181,15 @@
   - Create browser and Node.js environment tests
   - _Requirements: All requirements_
 
-- [ ] 12. Add TypeScript support and documentation
-- [ ] 12.1 Generate TypeScript declarations
+- [x] 12. Add TypeScript support and documentation
+- [x] 12.1 Generate TypeScript declarations
 
   - Ensure complete TypeScript type definitions are generated
   - Add comprehensive JSDoc documentation to all public APIs
   - Create type-safe interfaces for all codec options
   - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 12.2 Create API documentation and examples
+- [x] 12.2 Create API documentation and examples
 
   - Write comprehensive API documentation with examples
   - Create usage guides for common scenarios
@@ -197,8 +197,8 @@
   - Create TypeScript usage examples
   - _Requirements: 6.5_
 
-- [ ] 13. Build and packaging setup
-- [ ] 13.1 Configure build system
+- [x] 13. Build and packaging setup
+- [x] 13.1 Configure build system
 
   - Set up Rollup/Webpack for library bundling
   - Configure separate builds for Node.js and browser
@@ -206,7 +206,7 @@
   - Set up TypeScript declaration file generation
   - _Requirements: 5.1, 5.2_
 
-- [ ] 13.2 Package for distribution
+- [x] 13.2 Package for distribution
   - Configure package.json for npm publishing
   - Set up dual package exports for Node.js and browser
   - Create minified and development builds

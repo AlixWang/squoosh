@@ -7,7 +7,9 @@
     "outDir": "./dist/types",
     "emitDeclarationOnly": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "removeComments": false,
+    "stripInternal": false
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

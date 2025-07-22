@@ -26,20 +26,5 @@ export type { PngEncodeOptions } from './png/index.js';
 export { MozJpegDecoder, MozJpegEncoder } from './mozjpeg/index.js';
 export type { MozJpegEncoderOptions } from './mozjpeg/index.js';
 
-// Registration functions
-export { registerWebPCodecs } from './webp/register.js';
-export { registerAVIFCodecs } from './avif/register.js';
-export { registerJXLCodecs } from './jxl/register.js';
-export { registerPngCodecs } from './png/register.js';
-export { registerMozJpegCodecs } from './mozjpeg/register.js';
-
-/**
- * Register all available codecs
- */
-export function registerAllCodecs(): void {
-  registerWebPCodecs();
-  registerAVIFCodecs();
-  registerJXLCodecs();
-  registerPngCodecs();
-  registerMozJpegCodecs();
-}
+// Codec utilities
+export * from './codec-utils.js';

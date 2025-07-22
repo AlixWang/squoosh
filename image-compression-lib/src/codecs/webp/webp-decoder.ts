@@ -4,7 +4,7 @@
 
 import { AbstractDecoder } from '../base-codec.js';
 import { ImageFormat } from '../../types/index.js';
-import { DecodingError } from '../../errors/index.js';
+import { DecodingError, ErrorCode } from '../../errors/index.js';
 import type { WebPModule } from './dec/webp_dec.js';
 
 /**
@@ -37,7 +37,7 @@ export class WebPDecoder extends AbstractDecoder {
         noInitialRun: true,
       });
     } catch (error) {
-      throw new DecodingError('Failed to load WebP decoder module', { error });
+      throw new DecodingError('Failed to load WebP decoder module', ErrorCode.DECODER_INITIALIZATION_FAILED, { cause: error as Error });
     }
   }
 
@@ -90,7 +90,7 @@ export class WebPDecoder extends AbstractDecoder {
       if (error instanceof DecodingError) {
         throw error;
       }
-      throw new DecodingError('WebP decoding failed', { error });
+      throw new DecodingError('WebP decoding failed', ErrorCode.DECODING_FAILED, { cause: error as Error });
     }
   }
 

@@ -4,7 +4,7 @@
 
 import { AbstractEncoder } from '../base-codec.js';
 import { ImageFormat, EncodeOptions } from '../../types/index.js';
-import { EncodingError } from '../../errors/index.js';
+import { EncodingError, ErrorCode } from '../../errors/index.js';
 import type { WebPModule, EncodeOptions as WebPEncodeOptions } from './enc/webp_enc.js';
 
 /**
@@ -70,7 +70,7 @@ export class WebPEncoder extends AbstractEncoder {
         noInitialRun: true,
       });
     } catch (error) {
-      throw new EncodingError('Failed to load WebP encoder module', { error });
+      throw EncodingError.initializationFailed('webp', error as Error);
     }
   }
 
@@ -219,7 +219,7 @@ export class WebPEncoder extends AbstractEncoder {
       if (error instanceof EncodingError) {
         throw error;
       }
-      throw new EncodingError('WebP encoding failed', { error });
+      throw new EncodingError('WebP encoding failed', ErrorCode.ENCODING_FAILED, { cause: error as Error });
     }
   }
 

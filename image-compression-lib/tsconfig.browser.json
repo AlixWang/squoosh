@@ -2,23 +2,19 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2020"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "WebWorker"],
     "module": "ESNext",
     "moduleResolution": "node",
-    "outDir": "./dist/node",
+    "outDir": "./dist/browser",
     "declaration": false,
     "declarationMap": false,
-    "types": ["node"],
-    "skipLibCheck": true,
-    "typeRoots": ["node_modules/@types", "src/types"]
+    "skipLibCheck": true
   },
-  "include": ["src/**/*", "src/types/node-globals.d.ts"],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "src/__tests__",
-    "src/**/*.browser.ts"
+    "src/**/*.node.ts"
   ]
 }
