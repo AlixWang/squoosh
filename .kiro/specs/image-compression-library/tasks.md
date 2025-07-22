@@ -91,7 +91,7 @@
   - Write unit tests for pipeline functionality
   - _Requirements: 3.4, 7.5, 8.5_
 
-- [-] 7. Add additional image format support
+- [x] 7. Add additional image format support
 - [x] 7.1 Implement AVIF codec
 
   - Extract and adapt AVIF encoder/decoder from Squoosh
@@ -212,3 +212,73 @@
   - Create minified and development builds
   - Add bundle size optimization and analysis
   - _Requirements: 5.1, 5.2_
+
+## Critical Issues to Fix
+
+- [ ] 14. Fix codec registration and initialization
+- [ ] 14.1 Fix codec registration system
+
+  - Ensure all codecs are properly registered in CodecManager constructor
+  - Fix codec initialization and WASM module loading issues
+  - Add proper codec availability checking and fallback mechanisms
+  - Update codec registry to handle async initialization properly
+  - _Requirements: 1.1, 2.1, 2.2, 5.3_
+
+- [ ] 14.2 Fix format detection implementation
+
+  - Implement proper format detection from buffer signatures
+  - Add support for all implemented formats (WebP, AVIF, JXL, PNG, MozJPEG)
+  - Fix format detection edge cases and mixed signatures
+  - Ensure format detection works with various buffer sizes
+  - _Requirements: 1.4, 2.2_
+
+- [ ] 15. Fix input validation system
+- [ ] 15.1 Complete InputValidator implementation
+
+  - Add missing validation methods: validateRotateOptions, validateProcessingOperations
+  - Fix validateEncodeOptions method signature to match usage
+  - Implement proper validation for all processing operation types
+  - Add comprehensive validation for edge cases and invalid inputs
+  - _Requirements: 8.2, 8.4, 8.5_
+
+- [ ] 15.2 Fix validation error handling
+
+  - Ensure proper error types are thrown for different validation failures
+  - Fix test expectations to match actual validation behavior
+  - Implement proper validation for rotation angles (multiples of 90)
+  - Add validation for quantization color limits and other processor options
+  - _Requirements: 8.1, 8.2, 8.3_
+
+- [ ] 16. Fix WASM module loading and codec functionality
+- [ ] 16.1 Fix WebAssembly module initialization
+
+  - Ensure WASM modules are properly loaded and initialized
+  - Fix module path resolution for different environments
+  - Add proper error handling for WASM loading failures
+  - Implement fallback mechanisms when WASM is not available
+  - _Requirements: 5.3, 5.5, 7.1_
+
+- [ ] 16.2 Fix codec encode/decode operations
+
+  - Ensure all codec implementations can actually encode and decode images
+  - Fix ImageData conversion and buffer handling
+  - Add proper memory management for WASM operations
+  - Test and fix all format-specific encoding options
+  - _Requirements: 1.1, 1.3, 2.1, 4.1, 4.2_
+
+- [ ] 17. Fix test suite and edge cases
+- [ ] 17.1 Fix failing integration tests
+
+  - Fix format conversion matrix tests by ensuring all codecs are available
+  - Fix edge case handling for truncated and invalid images
+  - Update test expectations to match actual implementation behavior
+  - Add proper test data generation for all supported formats
+  - _Requirements: All requirements_
+
+- [ ] 17.2 Fix performance and memory tests
+
+  - Fix pipeline execution issues in performance tests
+  - Ensure concurrent operations work correctly
+  - Fix memory management and cleanup in edge cases
+  - Add proper timeout handling for long-running operations
+  - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
