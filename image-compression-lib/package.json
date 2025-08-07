@@ -1,15 +1,16 @@
 {
-  "name": "image-compression-lib",
+  "name": "@squoosh/image-compression-lib",
   "version": "1.0.0",
   "type": "module",
-  "description": "A TypeScript library for image compression and format conversion based on Squoosh",
-  "homepage": "https://github.com/your-org/image-compression-lib#readme",
+  "description": "A TypeScript library for image compression and format conversion based on Squoosh. Supports WebP, AVIF, JPEG XL, PNG, and MozJPEG formats with optimized performance for both Node.js and browser environments.",
+  "homepage": "https://github.com/GoogleChromeLabs/squoosh/tree/dev/image-compression-lib#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/image-compression-lib.git"
+    "url": "git+https://github.com/GoogleChromeLabs/squoosh.git",
+    "directory": "image-compression-lib"
   },
   "bugs": {
-    "url": "https://github.com/your-org/image-compression-lib/issues"
+    "url": "https://github.com/GoogleChromeLabs/squoosh/issues"
   },
   "main": "dist/node/index.cjs",
   "browser": "dist/browser/index.js",
@@ -103,8 +104,8 @@
     "rotate",
     "quantize"
   ],
-  "author": "",
-  "license": "MIT",
+  "author": "Google Chrome Labs",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
@@ -121,6 +122,7 @@
     "jsdom": "^23.0.0",
     "rimraf": "^5.0.0",
     "rollup": "^3.0.0",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.5.0",
@@ -130,5 +132,8 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1"
   }
 }

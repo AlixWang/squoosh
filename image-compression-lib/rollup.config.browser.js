@@ -2,13 +2,14 @@ import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
+import copy from 'rollup-plugin-copy';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 
 // Common plugins configuration
-const getPlugins = (isProduction = false) => [
+const getPlugins = (isProduction = false, includeCopy = false) => [
   nodeResolve({
     browser: true,
     preferBuiltins: false,
@@ -20,6 +21,15 @@ const getPlugins = (isProduction = false) => [
     declaration: false,
     declarationMap: false,
   }),
+  // Copy WASM files and other assets with correct structure
+  ...(includeCopy ? [
+    copy({
+      targets: [
+        { src: 'src/codecs', dest: 'dist/browser', ignore: ['**/*.ts', '**/*.d.ts', '**/__tests__/**'] },
+      ],
+      copyOnce: true
+    })
+  ] : []),
   ...(isProduction
     ? [
         terser({
@@ -52,7 +62,7 @@ export default [
       sourcemap: true,
       inlineDynamicImports: true,
     },
-    plugins: getPlugins(false),
+    plugins: getPlugins(false, true),
     external: ['worker_threads', 'fs', 'path', 'crypto'],
     treeshake: {
       moduleSideEffects: false,

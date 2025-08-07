@@ -35,6 +35,13 @@ import {
 import { InputValidator } from './validation/input-validator.js';
 import { ErrorRecovery } from './validation/error-recovery.js';
 
+// Import codec registration functions
+import { registerWebPCodecs } from './codecs/webp/register.js';
+import { registerAVIFCodecs } from './codecs/avif/register.js';
+import { registerJXLCodecs } from './codecs/jxl/register.js';
+import { registerPngCodecs } from './codecs/png/register.js';
+import { registerMozJpegCodecs } from './codecs/mozjpeg/register.js';
+
 /**
  * Main ImageCompressor class providing the public API for image compression and processing.
  *
@@ -89,6 +96,61 @@ export class ImageCompressor implements IImageCompressor {
   ) {
     this.codecManager = codecManager || new CodecManager();
     this.processorRegistry = processorRegistry || new ProcessorRegistry();
+    
+    // Auto-register codecs if using default codec manager
+    if (!codecManager) {
+      this.initializeCodecs();
+    }
+  }
+
+  /**
+   * Initialize and register all available codecs
+   */
+  private initializeCodecs(): void {
+    try {
+      // Register WebP codecs
+      try {
+        registerWebPCodecs(this.codecManager);
+      } catch (error) {
+        // WebP codec registration failed - continue without it
+        console.warn('WebP codec registration failed:', error);
+      }
+
+      // Register AVIF codecs
+      try {
+        registerAVIFCodecs(this.codecManager);
+      } catch (error) {
+        // AVIF codec registration failed - continue without it
+        console.warn('AVIF codec registration failed:', error);
+      }
+
+      // Register JPEG XL codecs
+      try {
+        registerJXLCodecs(this.codecManager);
+      } catch (error) {
+        // JXL codec registration failed - continue without it
+        console.warn('JXL codec registration failed:', error);
+      }
+
+      // Register PNG codecs
+      try {
+        registerPngCodecs(this.codecManager);
+      } catch (error) {
+        // PNG codec registration failed - continue without it
+        console.warn('PNG codec registration failed:', error);
+      }
+
+      // Register MozJPEG codecs
+      try {
+        registerMozJpegCodecs(this.codecManager);
+      } catch (error) {
+        // MozJPEG codec registration failed - continue without it
+        console.warn('MozJPEG codec registration failed:', error);
+      }
+    } catch (error) {
+      // Codec initialization failed - continue with empty codec manager
+      console.warn('Codec initialization failed:', error);
+    }
   }
 
   /**
@@ -452,6 +514,20 @@ export class ImageCompressor implements IImageCompressor {
           context,
         );
     }
+  }
+
+  /**
+   * Get an encoder for a specific format
+   */
+  getEncoder(format: ImageFormat) {
+    return this.codecManager.getEncoder(format);
+  }
+
+  /**
+   * Get a decoder for a specific format  
+   */
+  getDecoder(format: ImageFormat) {
+    return this.codecManager.getDecoder(format);
   }
 }
 /**

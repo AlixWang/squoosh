@@ -360,6 +360,20 @@ export class CodecManager {
   }
 
   /**
+   * Get an encoder for a specific format
+   */
+  getEncoder(format: ImageFormat): Encoder | undefined {
+    return this.encoders.get(format);
+  }
+
+  /**
+   * Get a decoder for a specific format
+   */
+  getDecoder(format: ImageFormat): Decoder | undefined {
+    return this.decoders.get(format);
+  }
+
+  /**
    * Clear all registered codecs
    */
   clear(): void {

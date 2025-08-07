@@ -8,7 +8,7 @@ export {
   BufferPoolStats,
   getGlobalBufferPool,
   configureGlobalBufferPool,
-} from './buffer-pool';
+} from './buffer-pool.js';
 
 export {
   MemoryMonitor,
@@ -17,7 +17,7 @@ export {
   MemoryAlert,
   getGlobalMemoryMonitor,
   configureGlobalMemoryMonitor,
-} from './memory-monitor';
+} from './memory-monitor.js';
 
 export {
   GCOptimizer,
@@ -25,4 +25,4 @@ export {
   GCStats,
   getGlobalGCOptimizer,
   configureGlobalGCOptimizer,
-} from './gc-optimizer';
+} from './gc-optimizer.js';

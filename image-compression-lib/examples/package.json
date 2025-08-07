@@ -1,0 +1,17 @@
+{
+  "name": "@squoosh/image-compression-lib-examples",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Usage examples for @squoosh/image-compression-lib",
+  "scripts": {
+    "basic": "node basic-usage.js",
+    "serve": "npx serve ."
+  },
+  "dependencies": {
+    "@squoosh/image-compression-lib": "file:.."
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}
