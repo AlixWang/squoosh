@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compression Library - Browser Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            margin: 20px 0;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a8b;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .results {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .image-preview {
+            max-width: 300px;
+            max-height: 200px;
+            margin: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>@squoosh/image-compression-lib Browser Example</h1>
+    
+    <div class="container">
+        <h2>Upload and Compress Images</h2>
+        <input type="file" id="fileInput" accept="image/*">
+        
+        <div>
+            <button onclick="convertToWebP()">Convert to WebP</button>
+            <button onclick="convertToAVIF()">Convert to AVIF</button>
+            <button onclick="convertToJXL()">Convert to JPEG XL</button>
+            <button onclick="resizeAndCompress()">Resize & Compress</button>
+        </div>
+    </div>
+
+    <div id="results" class="results" style="display: none;">
+        <h3>Results</h3>
+        <div id="output"></div>
+    </div>
+
+    <script type="module">
+        import { ImageCompressor } from './dist/browser/index.js';
+        
+        // Initialize the compressor
+        const compressor = new ImageCompressor({
+            enableWorkers: true,
+            maxWorkers: 2
+        });
+        
+        let currentFile = null;
+
+        document.getElementById('fileInput').addEventListener('change', (event) => {
+            currentFile = event.target.files[0];
+            if (currentFile) {
+                console.log('Selected file:', currentFile.name, currentFile.size, 'bytes');
+                showPreview(currentFile);
+            }
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const resultsDiv = document.getElementById('results');
+                const outputDiv = document.getElementById('output');
+                
+                outputDiv.innerHTML = `
+                    <div>
+                        <h4>Original Image</h4>
+                        <p>Size: ${(file.size / 1024).toFixed(2)} KB</p>
+                        <img src="${e.target.result}" class="image-preview" alt="Original">
+                    </div>
+                `;
+                resultsDiv.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        window.convertToWebP = async function() {
+            if (!currentFile) {
+                alert('Please select a file first');
+                return;
+            }
+
+            try {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const webpBuffer = await compressor.convert(arrayBuffer, 'webp', {
+                    quality: 80
+                });
+                
+                showResult('WebP', webpBuffer, currentFile.size);
+            } catch (error) {
+                console.error('WebP conversion failed:', error);
+                alert('WebP conversion failed: ' + error.message);
+            }
+        };
+
+        window.convertToAVIF = async function() {
+            if (!currentFile) {
+                alert('Please select a file first');
+                return;
+            }
+
+            try {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const avifBuffer = await compressor.convert(arrayBuffer, 'avif', {
+                    quality: 70,
+                    speed: 6
+                });
+                
+                showResult('AVIF', avifBuffer, currentFile.size);
+            } catch (error) {
+                console.error('AVIF conversion failed:', error);
+                alert('AVIF conversion failed: ' + error.message);
+            }
+        };
+
+        window.convertToJXL = async function() {
+            if (!currentFile) {
+                alert('Please select a file first');
+                return;
+            }
+
+            try {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const jxlBuffer = await compressor.convert(arrayBuffer, 'jpeg-xl', {
+                    quality: 85
+                });
+                
+                showResult('JPEG XL', jxlBuffer, currentFile.size);
+            } catch (error) {
+                console.error('JPEG XL conversion failed:', error);
+                alert('JPEG XL conversion failed: ' + error.message);
+            }
+        };
+
+        window.resizeAndCompress = async function() {
+            if (!currentFile) {
+                alert('Please select a file first');
+                return;
+            }
+
+            try {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const processedBuffer = await compressor
+                    .pipeline()
+                    .input(arrayBuffer)
+                    .decode()
+                    .resize({ width: 800, height: 600, method: 'lanczos3' })
+                    .encode('webp', { quality: 85 })
+                    .execute();
+                
+                showResult('Resized WebP (800x600)', processedBuffer, currentFile.size);
+            } catch (error) {
+                console.error('Resize and compress failed:', error);
+                alert('Resize and compress failed: ' + error.message);
+            }
+        };
+
+        function showResult(format, buffer, originalSize) {
+            const blob = new Blob([buffer]);
+            const url = URL.createObjectURL(blob);
+            const compressionRatio = ((originalSize - buffer.byteLength) / originalSize * 100).toFixed(1);
+            
+            const resultHTML = `
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <h4>${format} Result</h4>
+                    <p>Original size: ${(originalSize / 1024).toFixed(2)} KB</p>
+                    <p>Compressed size: ${(buffer.byteLength / 1024).toFixed(2)} KB</p>
+                    <p>Compression: ${compressionRatio}% smaller</p>
+                    <img src="${url}" class="image-preview" alt="${format} result">
+                    <br>
+                    <a href="${url}" download="compressed.${format.toLowerCase().replace(' ', '.')}" 
+                       style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: #28a745; color: white; text-decoration: none; border-radius: 4px;">
+                       Download ${format}
+                    </a>
+                </div>
+            `;
+            
+            document.getElementById('output').innerHTML += resultHTML;
+        }
+
+        // Log supported formats on load
+        console.log('Supported formats:', compressor.getSupportedFormats());
+    </script>
+</body>
+</html>

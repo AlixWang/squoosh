@@ -1,4 +1,4 @@
-# Image Compression Library
+# @squoosh/image-compression-lib
 
 A TypeScript library for image compression and format conversion based on Squoosh. Supports multiple image formats with optimized performance for both Node.js and browser environments.
 
@@ -16,7 +16,7 @@ A TypeScript library for image compression and format conversion based on Squoos
 ## Installation
 
 ```bash
-npm install image-compression-lib
+npm install @squoosh/image-compression-lib
 ```
 
 ## Quick Start
@@ -24,7 +24,7 @@ npm install image-compression-lib
 ### Basic Usage
 
 ```typescript
-import { ImageCompressor } from 'image-compression-lib';
+import { ImageCompressor } from '@squoosh/image-compression-lib';
 
 const compressor = new ImageCompressor();
 
@@ -49,7 +49,7 @@ const resizedBuffer = await compressor
 ### Advanced Usage
 
 ```typescript
-import { ImageCompressor } from 'image-compression-lib';
+import { ImageCompressor } from '@squoosh/image-compression-lib';
 
 const compressor = new ImageCompressor({
   maxWorkers: 4,
@@ -104,7 +104,7 @@ Main class for image compression operations.
 
 ```html
 <script type="module">
-  import { ImageCompressor } from 'image-compression-lib/browser';
+  import { ImageCompressor } from '@squoosh/image-compression-lib/browser';
 
   const compressor = new ImageCompressor();
   // Use as shown above
@@ -114,9 +114,9 @@ Main class for image compression operations.
 ## Node.js Usage
 
 ```javascript
-const { ImageCompressor } = require('image-compression-lib/node');
+const { ImageCompressor } = require('@squoosh/image-compression-lib/node');
 // or
-import { ImageCompressor } from 'image-compression-lib/node';
+import { ImageCompressor } from '@squoosh/image-compression-lib/node';
 ```
 
 ## Performance Tips
@@ -136,7 +136,7 @@ import {
   ImageFormat,
   EncodeOptions,
   ProcessingOperation,
-} from 'image-compression-lib';
+} from '@squoosh/image-compression-lib';
 
 const compressor: ImageCompressor = new ImageCompressor();
 const format: ImageFormat = 'webp';
@@ -146,7 +146,7 @@ const options: EncodeOptions = { quality: 80 };
 ## Error Handling
 
 ```typescript
-import { ImageCompressionError } from 'image-compression-lib';
+import { ImageCompressionError } from '@squoosh/image-compression-lib';
 
 try {
   const result = await compressor.convert(buffer, 'webp');
