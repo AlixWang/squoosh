@@ -1,6 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import copy from 'rollup-plugin-copy';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
@@ -39,6 +40,13 @@ const getNodePlugins = () => [
     outDir: './dist/node',
     declaration: false,
     declarationMap: false,
+  }),
+  // Copy WASM files and JS modules for Node.js with correct structure
+  copy({
+    targets: [
+      { src: 'src/codecs', dest: 'dist/node', ignore: ['**/*.ts', '**/*.d.ts', '**/__tests__/**'] },
+    ],
+    copyOnce: true
   }),
 ];
 
